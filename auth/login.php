@@ -1,39 +1,36 @@
 <?php
 session_start();
-     require_once '../functions/helpers.php';
-     require_once '../functions/pdo_connection.php';
+require_once '../functions/helpers.php';
+require_once '../functions/pdo_connection.php';
 
-     $error = '';
-     if(isset($_POST['email']) && $_POST['email'] !== ''
-         && isset($_POST['password']) && $_POST['password'] !== '') 
-         {
+$error = '';
+if (isset($_POST['email']) && $_POST['email'] !== ''
+    && isset($_POST['password']) && $_POST['password'] !== '') {
 
-            $query = "SELECT * FROM users WHERE email = ?;";
-            $statement = $pdo->prepare($query);
-            $statement->execute([$_POST['email']]);
-            $user = $statement->fetch();
-            if($user !== false)
-            {
-                    if(password_verify($_POST['password'], $user->password))
-                    {
-                            $_SESSION['user'] =  $user->email;
-                            redirect('panel');
-                    }
-                    else{
-                        $error = 'password is wrong';
-                    }
+    $query = "SELECT * FROM users WHERE email = ?;";
+    $statement = $pdo->prepare($query);
+    $statement->execute([$_POST['email']]);
+    $user = $statement->fetch();
+    if ($user !== false) {
+        if (password_verify($_POST['password'], $user->password)) {
+            $_SESSION['user'] = $user->email;
+            $_SESSION['role'] = $user->role;
+            if ($user->role == 'admin') {
+                redirect('panel');
+            } else {
+                redirect('index.php');
             }
-            else{
-                $error = 'Email is wrong';
-            }
-
-         }
-         else{
-            if(!empty($_POST))
-            $error = 'All fields are required';
+        } else {
+            $error = 'Password is wrong';
         }
-
-     ?>
+    } else {
+        $error = 'Email is wrong';
+    }
+} else {
+    if (!empty($_POST))
+        $error = 'All fields are required';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,13 +45,13 @@ session_start();
 
 <body>
     <section id="app">
-    <?php require_once '../panel/layouts/top-nav-login.php' ?>
-    <section style="height: 100vh; background-color: #5B5B5B;" class="d-flex justify-content-center align-items-center">
-        <section class="form-box">
-            <h1 class="bg-warning rounded-top px-2 mb-0 py-3 h5">Login</h1>
-            <section class="bg-light my-0 px-2">
-                <small class="text-danger"><?php if ($error !== '') echo $error; ?></small>
-            </section>
+        <?php require_once '../panel/layouts/top-nav-login.php' ?>
+        <section style="height: 100vh; background-color: #5B5B5B;" class="d-flex justify-content-center align-items-center">
+            <section class="form-box">
+                <h1 class="bg-warning rounded-top px-2 mb-0 py-3 h5">Login</h1>
+                <section class="bg-light my-0 px-2">
+                    <small class="text-danger"><?php if ($error !== '') echo $error; ?></small>
+                </section>
                 <form class="pt-3 pb-1 px-2 bg-light rounded-bottom" action="<?= url('auth/login.php') ?>" method="post">
                     <section class="form-group">
                         <label for="email">Email</label>
@@ -65,16 +62,16 @@ session_start();
                         <input type="password" class="form-control" name="password" id="password" placeholder="password ...">
                     </section>
                     <section class="mt-4 mb-2 d-flex justify-content-between">
-                    <input type="submit" class="btn btn-success btn-sm submit-btn" value="login">
-                </section>
-                <a class="login-link" href="<?= url('auth/register.php') ?>">Register</a>
+                        <input type="submit" class="btn btn-success btn-sm submit-btn" value="login">
+                    </section>
+                    <a class="login-link" href="<?= url('auth/register.php') ?>">Register</a>
                 </form>
             </section>
         </section>
 
     </section>
     <script src="<?= asset('assets/js/jquery.min.js') ?>"></script>
-<script src="<?= asset('assets/js/bootstrap.min.js') ?>"></script>
+    <script src="<?= asset('assets/js/bootstrap.min.js') ?>"></script>
 </body>
 
 </html>

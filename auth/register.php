@@ -1,50 +1,39 @@
 <?php
-     require_once '../functions/helpers.php';
-     require_once '../functions/pdo_connection.php';
+require_once '../functions/helpers.php';
+require_once '../functions/pdo_connection.php';
 
-    $error = '';
-     if(isset($_POST['email']) && $_POST['email'] !== ''
-         && isset($_POST['first_name']) && $_POST['first_name'] !== ''
-         && isset($_POST['last_name']) && $_POST['last_name'] !== ''
-         && isset($_POST['password']) && $_POST['password'] !== ''
-         && isset($_POST['confirm']) && $_POST['confirm'] !== '') 
-         {
+$error = '';
+if (isset($_POST['email']) && $_POST['email'] !== ''
+    && isset($_POST['first_name']) && $_POST['first_name'] !== ''
+    && isset($_POST['last_name']) && $_POST['last_name'] !== ''
+    && isset($_POST['password']) && $_POST['password'] !== ''
+    && isset($_POST['confirm']) && $_POST['confirm'] !== '') {
 
-            if($_POST['password'] === $_POST['confirm'])
-            {
-                if(strlen($_POST['password']) > 5)
-                {
-                    $query = "SELECT * FROM users WHERE email = ?;";
-                    $statement = $pdo->prepare($query);
-                    $statement->execute([$_POST['email']]);
-                    $user = $statement->fetch();
-                    if($user === false)
-                    {
-                        $query = "INSERT INTO users SET email = ?, first_name = ?, last_name = ?, password = ?, created_at = NOW() ;";
-                        $statement = $pdo->prepare($query);
-                        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-                        $statement->execute([$_POST['email'], $_POST['first_name'], $_POST['last_name'], $password]);
-                        redirect('auth/login.php');
-                    }
-                    else{
-                        $error = 'This email already exists';
-                    
-                    }
-                }
-                else{
-                    $error ='Password must be more than 5 characters';
-                }
-
+    if ($_POST['password'] === $_POST['confirm']) {
+        if (strlen($_POST['password']) > 5) {
+            $query = "SELECT * FROM users WHERE email = ?;";
+            $statement = $pdo->prepare($query);
+            $statement->execute([$_POST['email']]);
+            $user = $statement->fetch();
+            if ($user === false) {
+                $query = "INSERT INTO users SET email = ?, first_name = ?, last_name = ?, password = ?, role = 'user', created_at = NOW();";
+                $statement = $pdo->prepare($query);
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $statement->execute([$_POST['email'], $_POST['first_name'], $_POST['last_name'], $password]);
+                redirect('auth/login.php');
+            } else {
+                $error = 'This email already exists';
             }
-            else{
-                $error = 'Password does not match the certificate';
-            }
-
-         }
-         else{
-             if(!empty($_POST))
-             $error = 'All fields are required';
-         }
+        } else {
+            $error = 'Password must be more than 5 characters';
+        }
+    } else {
+        $error = 'Password does not match the confirm';
+    }
+} else {
+    if (!empty($_POST))
+        $error = 'All fields are required';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,13 +49,13 @@
 
 <body>
     <section id="app">
-    <?php require_once '../panel/layouts/top-nav-login.php' ?>
-    <section style="height: 100vh; background-color: #5B5B5B;" class="d-flex justify-content-center align-items-center">
-        <section class="form-box">
-            <h1 class="bg-warning rounded-top px-2 mb-0 py-3 h5">Register with Us</h1>
-            <section class="bg-light my-0 px-2">
-                <small class="text-danger"><?php if ($error !== '') echo $error; ?></small>
-            </section>
+        <?php require_once '../panel/layouts/top-nav-login.php' ?>
+        <section style="height: 100vh; background-color: #5B5B5B;" class="d-flex justify-content-center align-items-center">
+            <section class="form-box">
+                <h1 class="bg-warning rounded-top px-2 mb-0 py-3 h5">Register with Us</h1>
+                <section class="bg-light my-0 px-2">
+                    <small class="text-danger"><?php if ($error !== '') echo $error; ?></small>
+                </section>
                 <form class="pt-3 pb-1 px-2 bg-light rounded-bottom" action="<?= url('auth/register.php') ?>" method="post">
                     <section class="form-group">
                         <label for="email">Email</label>
@@ -89,16 +78,16 @@
                         <input type="password" class="form-control" name="confirm" id="confirm" placeholder="confirm ...">
                     </section>
                     <section class="mt-4 mb-2">
-                    <input type="submit" class="btn btn-success btn-sm submit-btn" value="register">
-                </section>
-                <a class="login-link" href="<?= url('auth/login.php') ?>">Login</a>
+                        <input type="submit" class="btn btn-success btn-sm submit-btn" value="register">
+                    </section>
+                    <a class="login-link" href="<?= url('auth/login.php') ?>">Login</a>
                 </form>
             </section>
         </section>
 
     </section>
     <script src="<?= asset('assets/js/jquery.min.js') ?>"></script>
-<script src="<?= asset('assets/js/bootstrap.min.js') ?>"></script>
+    <script src="<?= asset('assets/js/bootstrap.min.js') ?>"></script>
 </body>
 
 </html>
