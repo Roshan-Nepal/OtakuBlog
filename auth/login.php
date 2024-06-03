@@ -16,7 +16,7 @@ if (isset($_POST['email']) && $_POST['email'] !== ''
             $_SESSION['user'] = $user->email;
             $_SESSION['role'] = $user->role;
             if ($user->role == 'admin') {
-                redirect('panel');
+                redirect('panel/index.php');
             } else {
                 redirect('index.php');
             }
