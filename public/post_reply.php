@@ -1,6 +1,6 @@
 <?php
-require_once '../../functions/helpers.php';
-require_once '../../functions/pdo_connection.php';
+require_once '../functions/helpers.php';
+require_once '../functions/pdo_connection.php';
 
 session_start(); // Make sure to start the session to use session variables
 
