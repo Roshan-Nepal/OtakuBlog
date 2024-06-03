@@ -63,7 +63,7 @@ if ($post !== false) {
 
                 <h1><?= $post->title ?></h1>
                 <h5 class="d-flex justify-content-between align-items-center">
-                    <a href="<?= url('category.php?cat_id=') . $post->cat_id ?>"><?= $post->category_name ?></a>
+                    <a href="<?= url('category.php?cat_id=') . $post->cat_id ?>">Category: <?= $post->category_name ?></a>
                     <span class="date-time"><?= $post->created_at ?></span>
                 </h5>
                 <article class="bg-article p-3"><img class="float-right mb-2 ml-2" style="width: 18rem;" src="<?= asset($post->image) ?>" alt=""><?= $post->body ?></article>
