@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'functions/helpers.php';
 require_once 'functions/pdo_connection.php';
 
@@ -63,7 +64,7 @@ if ($post !== false) {
                     <h2>Aggregate Rating: <?= number_format($aggregateRating, 1) ?> / 5 (<?= $totalReviews ?> reviews)</h2>
                     <?php if (isset($_SESSION['user'])): ?>
                         <h2>Leave a Review</h2>
-                        <form action="<?= url('public/post_review') ?>" method="post">
+                        <form action="<?= url('public/post_review.php') ?>" method="post">
                             <input type="hidden" name="post_id" value="<?= $post->id ?>">
                             <div class="form-group">
                                 <label for="rating">Rating</label>
@@ -107,6 +108,7 @@ if ($post !== false) {
                             <?php if (isset($_SESSION['user'])): ?>
                                 <form action="<?= url('public/post_reply.php') ?>" method="post">
                                     <input type="hidden" name="review_id" value="<?= $review->id ?>">
+                                    <input type="hidden" name="post_id" value="<?= $post->id ?>">
                                     <textarea name="comment" class="form-control" required></textarea>
                                     <button type="submit" class="btn btn-primary">Reply</button>
                                 </form>

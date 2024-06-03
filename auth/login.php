@@ -4,31 +4,37 @@ require_once '../functions/helpers.php';
 require_once '../functions/pdo_connection.php';
 
 $error = '';
-if (isset($_POST['email']) && $_POST['email'] !== ''
-    && isset($_POST['password']) && $_POST['password'] !== '') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['email']) && !empty($_POST['password'])) {
 
-    $query = "SELECT * FROM users WHERE email = ?;";
-    $statement = $pdo->prepare($query);
-    $statement->execute([$_POST['email']]);
-    $user = $statement->fetch();
-    if ($user !== false) {
-        if (password_verify($_POST['password'], $user->password)) {
-            $_SESSION['user'] = $user->email;
-            $_SESSION['role'] = $user->role;
-            if ($user->role == 'admin') {
-                redirect('panel/index.php');
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $password = $_POST['password'];
+
+        $query = "SELECT * FROM users WHERE email = ?";
+        $statement = $pdo->prepare($query);
+        $statement->execute([$email]);
+        $user = $statement->fetch();
+
+        if ($user !== false) {
+            if (password_verify($password, $user->password)) {
+                $_SESSION['user'] = $user->email;
+                $_SESSION['user_id'] = $user->id; // Set the user_id in session
+                $_SESSION['role'] = $user->role;
+                if ($user->role == 'admin') {
+                    redirect('panel/index.php');
+                } else {
+                    redirect('index.php');
+                }
             } else {
-                redirect('index.php');
+                $error = 'Password is wrong';
             }
         } else {
-            $error = 'Password is wrong';
+            $error = 'Email is wrong';
         }
-    } else {
-        $error = 'Email is wrong';
-    }
-} else {
-    if (!empty($_POST))
+    } 
+    else {
         $error = 'All fields are required';
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -50,7 +56,7 @@ if (isset($_POST['email']) && $_POST['email'] !== ''
             <section class="form-box">
                 <h1 class="bg-warning rounded-top px-2 mb-0 py-3 h5">Login</h1>
                 <section class="bg-light my-0 px-2">
-                    <small class="text-danger"><?php if ($error !== '') echo $error; ?></small>
+                    <small class="text-danger"><?php if ($error !== '') echo htmlspecialchars($error); ?></small>
                 </section>
                 <form class="pt-3 pb-1 px-2 bg-light rounded-bottom" action="<?= url('auth/login.php') ?>" method="post">
                     <section class="form-group">
