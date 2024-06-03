@@ -35,12 +35,12 @@ session_start();
                 <?php 
                 if (!isset($_SESSION['user'])) {
                     ?>
-        <a class="text-decoration-none text-white px-2 " href="<?= url('auth/register.php') ?>">register</a>
-        <a class="text-decoration-none text-white " href="<?= url('auth/login.php') ?>">login</a>
+        <a class="text-decoration-none text-white px-2 " href="<?= url('auth/register.php') ?>">Register</a>
+        <a class="text-decoration-none text-white " href="<?= url('auth/login.php') ?>">Login</a>
         <?php
                 } else { ?>
 
-        <a class="text-decoration-none text-white px-2 " href="<?= url('auth/logout.php') ?>">logout</a>
+        <a class="text-decoration-none text-white px-2 " href="<?= url('auth/logout.php') ?>">Logout</a>
 
         <?php } ?>
 
