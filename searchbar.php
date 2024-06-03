@@ -14,13 +14,14 @@ require_once 'functions/pdo_connection.php';
 <body>
     <section id="app">
         <?php $query = isset($_GET['query']) ? $_GET['query'] : '';
+        $searchKeyword = $query;
     $searchResults = [];
 
     if ($query !== '') {
     $searchQuery = '%' . $query . '%';
-    $sql = "SELECT * FROM posts WHERE (title LIKE ? OR body LIKE ?) AND status = 10";
+    $sql = "SELECT * FROM posts WHERE (title LIKE ?) AND status = 10";
     $statement = $pdo->prepare($sql);
-    $statement->execute([$searchQuery, $searchQuery]);
+    $statement->execute([$searchQuery]);
     $searchResults = $statement->fetchAll();
 }?>
         <?php require_once "layouts/top-nav.php"; ?>
@@ -34,10 +35,14 @@ require_once 'functions/pdo_connection.php';
 
         <section id="app">
             <section class="container my-5">
-                <h1>Results for your search</h1>
-                <hr>
+                
+            <?php if (!empty($searchResults)) { ?>
+            <p>Results for: <i><?=  $searchKeyword;?><i></p>
+            <?php } ?>
+        
                 <section class="row">
                     <?php if (!empty($searchResults)) : ?>
+                        
                         <?php foreach ($searchResults as $post) : ?>
                             <section class="col-md-4">
                                 <section class="mb-2 overflow-hidden" style="height: 15rem;">
@@ -50,7 +55,7 @@ require_once 'functions/pdo_connection.php';
                         <?php endforeach; ?>
                     <?php else : ?>
                         <section class="col-12">
-                            <p>No results found for your serach.</p>
+                            <p>No results found for <?=  $searchKeyword?>.</p>
                         </section>
                     <?php endif; ?>
                 </section>
