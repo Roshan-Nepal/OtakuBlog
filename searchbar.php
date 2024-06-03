@@ -34,7 +34,7 @@ require_once 'functions/pdo_connection.php';
 
         <section id="app">
             <section class="container my-5">
-                <h1>Search Anime Post</h1>
+                <h1>Results for your search</h1>
                 <hr>
                 <section class="row">
                     <?php if (!empty($searchResults)) : ?>
